@@ -20,8 +20,8 @@ metadata['num_students'] = 22;
 metadata['quorum'] = 20;
 
 function resetCounts() {
-  votes['veronika'] = 5;
-  votes['serpentina'] = 10;
+  votes['veronika'] = 0;
+  votes['serpentina'] = 0;
   status_msg = '';
 }
 
