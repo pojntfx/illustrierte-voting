@@ -1,0 +1,4 @@
+/* Use the same font as on rest of the page */
+body {
+  font-family: Georgia, "Times New Roman", Times, serif;
+}

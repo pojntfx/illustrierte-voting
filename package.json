@@ -1,0 +1,10 @@
+{
+     "name": "votaciones_ceeinf",
+     "description": "Sistema de conteo de votos en tiempo real usando node.js",
+     "version": "0.1.0",
+     "dependencies": {
+        "express": "3.*",
+        "socket.io": "0.*"
+     },
+     "private": true
+}

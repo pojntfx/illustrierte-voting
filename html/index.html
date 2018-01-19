@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Title -->
+  <title>Die Illustrierte | Anselmus-Wahl</title>
+
+  <!-- Meta tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- JQuery -->
+  <script src="jquery.min.js"></script>
+  <!-- Socket.io for realtime -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Google visualization -->
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+    google.load('visualization', '1', { packages: ['corechart'] });
+  </script>
+
+  <!-- Bootstrap (CSS only) -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <!-- Output visualization in card -->
+    <div class="row">
+      <div id="output-diagram" class="col d-flex justify-content-center">
+        <img id="output-diagram_img" class="card-img-top" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Results in a table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Einheit</th>
+          <th scope="col">Veronika</th>
+          <th scope="col">Serpentina</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th class="thead-dark" scope="row">Stimmen</th>
+          <td id="votes_veronika"></td>
+          <td id="votes_serpentina"></td>
+        </tr>
+        <tr>
+          <th class="thead-dark" scope="row">Prozent</th>
+          <td id="percentage_veronika"></td>
+          <td id="percentage_serpentina"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- "Vote now" - Button -->
+  <a href="/edit.html" class="btn btn-success btn-block mb-3" role="button">Zur Abstimmung</a>
+
+  <!-- Latest comment -->
+  <div class="alert alert-secondary" role="alert">
+    <div class="latest-comment">
+    </div>
+  </div>
+
+  <!-- Client-side scripts -->
+  <script>
+    function drawVisualization(veronika, serpentina) {
+      var data = google.visualization.arrayToDataTable([
+        ['Task', 'Votaciones'],
+        ['Veronika', veronika],
+        ['Serpentina', serpentina],
+      ]);
+
+      new google.visualization.PieChart(document.getElementById('output-diagram')).draw(data, {
+        title: "Ist Veronika oder Serpentina die bessere Wahl für Anselmus?",
+        width: 320,
+        height: 200,
+        is3D: false,
+        colors: ['#212529', '#218838']
+      });
+    }
+
+    google.setOnLoadCallback(drawVisualization);
+
+    var socket = io.connect('http://localhost:8080');
+    var metadata = {};
+
+    socket.on('connect', function () {
+      socket.emit('addstream');
+    });
+
+    function updatePercents(votes) {
+      var num_votes = 0;
+      var num_students = metadata['num_students'];
+      var vote_pc = 0;
+
+      for (var choice in votes) {
+        num_votes += votes[choice];
+      }
+      for (var choice in votes) {
+        $('#percentage_' + choice).empty();
+        vote_pc = ((votes[choice] * 100) / num_votes).toFixed(2);
+        $('#percentage_' + choice).append(vote_pc + '%');
+      }
+      var votes_percent = ((num_votes * 100) / num_students).toFixed(2);
+      $('#votes_texto').empty();
+      $('#votes_texto').append(
+        'Quórum ' + votes_percent + '% ('
+        + num_votes + '/' + num_students + ')');
+      var style = "width:" + votes_percent + "%;";
+      if (votes_percent >= metadata['quorum']) {
+        style += "background:rgb(146,208,80)";
+      } else {
+        style += "background:red";
+      }
+      $('#barra').attr('style', style);
+    }
+
+    socket.on('update_counts', function (votes) {
+      for (var choice in votes) {
+        $('#votes_' + choice).empty();
+        $('#votes_' + choice).append(votes[choice] + ' Stimmen');
+      }
+      updatePercents(votes);
+      drawVisualization(
+        votes['veronika'],
+        votes['serpentina'],
+      );
+    });
+
+    socket.on('update_status', function (msg) {
+      $('.latest-comment').empty();
+      $('.latest-comment').append('Aktuellstes Kommentar: "' + msg + '"');
+    });
+
+    socket.on('update_metadata', function (mdata) {
+      metadata = mdata;
+    });
+  </script>
+</body>
+
+</html>
