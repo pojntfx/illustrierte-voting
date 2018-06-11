@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="de">
 
 <head>
   <!-- Title -->
@@ -10,118 +10,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- JQuery -->
-  <script src="jquery.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
   <!-- Socket.io for realtime -->
   <script src="/socket.io/socket.io.js"></script>
-  <!-- Google visualization -->
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript">
-    google.load('visualization', '1', { packages: ['corechart'] });
-  </script>
 
   <!-- Bootstrap (CSS only) -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
     crossorigin="anonymous">
 
   <!-- Custom styles -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Client-side scripts -->
-  <script>
-
-    // Helper variables for storing votes
-    var votesSerpentina = {};
-    var votesVeronika = {};
-    var lastVoteFromThisUser = '';
-
-    var socket = io.connect('DIE_ILLUSTRIERTE_VOTING_SOCKET');
-
-    socket.on('connect', function () {
-      socket.emit('addstream');
-    });
-
-    socket.on('update_counts', function (votes) {
-      for (var choice in votes) {
-        $('#' + choice).attr('value', votes[choice])
-      }
-      console.log(votes)
-      votesSerpentina = votes['serpentina']
-      votesVeronika = votes['veronika']
-      console.log(votesSerpentina, votesVeronika)
-    });
-
-    // Add a vote to Veronika. Has all checks included
-    function addVoteToVeronika() {
-      if (lastVoteFromThisUser !== 'veronika' && lastVoteFromThisUser !== 'serpentina') {
-        votesVeronika = votesVeronika + 1
-        lastVoteFromThisUser = 'veronika'
-        console.log('Für', lastVoteFromThisUser, 'gestimmt, Veronika hat nun', votesVeronika, 'Stimmen.')
-      } else if (lastVoteFromThisUser == 'serpentina') {
-        removeVoteFromSerpentina()
-        votesVeronika = votesVeronika + 1
-        lastVoteFromThisUser = 'veronika'
-        console.log('Für', lastVoteFromThisUser, 'gestimmt, Veronika hat nun', votesVeronika, 'Stimmen.')
-      }
-      updateVeronika(votesVeronika)
-    }
-
-    // Remove a vote from Serpentina. Has all checks included
-    function removeVoteFromSerpentina() {
-      if (votesSerpentina > 0 && lastVoteFromThisUser !== 'veronika') {
-        votesSerpentina = votesSerpentina - 1
-        lastVoteFromThisUser = ''
-        updateSerpentina(votesSerpentina)
-        addVoteToVeronika()
-      } else {
-        console.log('Du hast schon für Veronika gestimmt')
-        // Bzw. Serpentina hätte danach weniger als 0 Stimme, aber das sollte nicht vorkommen
-      }
-    }
-
-    // Remove a vote from Serpentina. Has all checks included
-    function removeVoteFromVeronika() {
-      if (votesVeronika > 0 && lastVoteFromThisUser !== 'serpentina') {
-        votesVeronika = votesVeronika - 1
-        lastVoteFromThisUser = ''
-        updateVeronika(votesVeronika)
-        addVoteToSerpentina()
-      } else {
-        console.log('Du hast schon für Serpentina gestimmt')
-        // Bzw. Veronika hätte danach weniger als 0 Stimme, aber das sollte nicht vorkommen
-      }
-    }
-
-    // Add a vote to Serpentina. Has all checks included
-    function addVoteToSerpentina () {
-      if (lastVoteFromThisUser !== 'serpentina' && lastVoteFromThisUser !== 'veronika') {
-        votesSerpentina = votesSerpentina + 1
-        lastVoteFromThisUser = 'serpentina'
-        console.log('Für', lastVoteFromThisUser, 'gestimmt, Serpentina hat nun', votesSerpentina, 'Stimmen.')
-      } else if (lastVoteFromThisUser == 'serpentina') {
-        removeVoteFromVeronika()
-        votesSerpentina = votesSerpentina + 1
-        lastVoteFromThisUser = 'serpentina'
-        console.log('Für', lastVoteFromThisUser, 'gestimmt, Serpentina hat nun', votesSerpentina, 'Stimmen.')
-      }
-      updateSerpentina(votesSerpentina)
-    }
-
-    socket.on('update_status', function (msg) {
-      $('#status').val(msg);
-    })
-
-    function updateStatus() {
-      socket.emit('update_status', $('#status').val());
-    }
-
-    function updateVeronika() {
-      socket.emit('update_votes', 'veronika', votesVeronika);
-    }
-
-    function updateSerpentina() {
-      socket.emit('update_votes', 'serpentina', votesSerpentina);
-    }
-  </script>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
@@ -129,15 +27,18 @@
 
     <!-- Voting -->
     <div class="btn-group" role="group" aria-label="Vote for your character" style="width: 100%;">
-      <button onclick="addVoteToVeronika()" type="button" class="btn btn-primary" style="width: 50%; font-size: 85%;">Für Veronika stimmen</button>
-      <button onclick="addVoteToSerpentina()" type="button" class="btn btn-info" style="width: 50%; font-size: 85%;">Für Serpentina stimmen</button>
+      <button onclick="veronika.addVote()" type="button" class="btn btn-primary" style="width: 50%; font-size: 85%;">Für Veronika stimmen</button>
+      <button onclick="serpentina.addVote()" type="button" class="btn btn-info" style="width: 50%; font-size: 85%;">Für Serpentina stimmen</button>
     </div>
 
     <!-- Comment section -->
-    <textarea id="status" name="status" onchange="updateStatus()" class="form-control mt-3 mb-3" placeholder="Optionales Kommentar"></textarea>
+    <textarea id="status" name="status" onchange="votingEdit.updateStatus()" class="form-control mt-3 mb-3" placeholder="Optionales Kommentar"></textarea>
 
     <!-- "Vote now" - Button -->
-    <a href="/" class="btn btn-success btn-block mb-3" role="button" onclick="updateStatus()">Speichern & zurück zur Auswertung</a>
+    <a href="/" class="btn btn-success btn-block mb-3" role="button" onclick="votingEdit.updateStatus()">Speichern & zurück zur Auswertung</a>
+
+    <!-- Scripts -->
+    <script src="/js/edit.js"></script>
 </body>
 
 </html>
