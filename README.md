@@ -1,6 +1,6 @@
 # Die Illustrierte Voting
 
-A quick and dirty voting system, based on socket.io. Forked from https://github.com/csaldias/node_voting.
+A quick and dirty voting system, based on socket.io. Forked from [github.com/csaldias/node_voting](https://github.com/csaldias/node_voting).
 
 ## Demo
 
