@@ -1,13 +1,31 @@
 {
-     "name": "votaciones_ceeinf",
-     "description": "Sistema de conteo de votos en tiempo real usando node.js",
-     "version": "0.1.0",
-     "dependencies": {
-        "express": "3.*",
-        "socket.io": "0.*"
-     },
-     "private": true,
-     "scripts": {
-       "start": "node app.js"
-     }
+  "name": "die-illustrierte-voting",
+  "description": "Sistema de conteo de votos en tiempo real usando node.js",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "3.*",
+    "socket.io": "0.*"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/die-illustrierte/voting.git"
+  },
+  "keywords": [
+    "voting",
+    "democracy",
+    "realtime",
+    "socket.io"
+  ],
+  "author": "Felicitas Pojtinger",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://gitlab.com/die-illustrierte/voting/issues"
+  },
+  "homepage": "https://gitlab.com/die-illustrierte/voting#README"
 }

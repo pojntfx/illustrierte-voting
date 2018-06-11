@@ -34,7 +34,7 @@
     var votesVeronika = {};
     var lastVoteFromThisUser = '';
 
-    var socket = io.connect('https://die-illustrierte-voting1-die-illustrierte-voting.a3c1.starter-us-west-1.openshiftapps.com/');
+    var socket = io.connect('DIE_ILLUSTRIERTE_VOTING_SOCKET');
 
     socket.on('connect', function () {
       socket.emit('addstream');
