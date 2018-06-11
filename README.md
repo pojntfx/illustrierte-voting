@@ -10,12 +10,12 @@ Sadly, we had to take the demo offline due to too server costs. Feel free to hos
 
 ```bash
 # Set variables
-sed -i s/DIE_ILLUSTRIERTE_VOTING_SOCKET/your-url/g ./html/edit.html # Use your own URL here (i.e. https://die-illustrierte-voting1.openshiftapps.com/ or just your / if it's localhost)
-sed -i s/DIE_ILLUSTRIERTE_VOTING_SOCKET/your-url/g ./html/index.html
+sed -i s/DIE_ILLUSTRIERTE_VOTING_SOCKET/your-url/g ./frontend/edit.html # Use your own URL here (i.e. https://die-illustrierte-voting1.openshiftapps.com/ or just your / if it's localhost)
+sed -i s/DIE_ILLUSTRIERTE_VOTING_SOCKET/your-url/g ./frontend/index.html
 # Install dependencies
 npm install
 # Build and serve development version on http://localhost:8080
-npm start
+npm run dev
 ```
 
 ## Screenshots
@@ -28,7 +28,10 @@ npm start
 
 ## Deployment
 
-> TODO: Add deployment
+```bash
+# Build and serve production version on http://localhost:8080
+npm start
+```
 
 ## License
 

@@ -8,10 +8,13 @@
   },
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "main": "app.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.17.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@gitlab.com/die-illustrierte/voting.git"
